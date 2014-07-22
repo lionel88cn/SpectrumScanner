@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    plot.cpp
+    plot.cpp \
+    controlpannel.cpp
 
 HEADERS  += mainwindow.h \
-    plot.h
+    plot.h \
+    controlpannel.h
 
-FORMS    += mainwindow.ui
+FORMS    +=

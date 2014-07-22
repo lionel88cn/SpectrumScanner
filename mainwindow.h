@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "plot.h"
+#include "controlpannel.h"
 
 class MainWindow : public QMainWindow
 {
@@ -10,7 +11,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
 private:
-    Plot* d_plot;
+    ControlPannel* c_pannel;
 };
 
 #endif // MAINWINDOW_H

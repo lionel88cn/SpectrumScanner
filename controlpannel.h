@@ -7,7 +7,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QCheckBox>
-#include <plot.h>
+#include "plot.h"
 
 class ControlPannel : public QWidget
 {
@@ -28,7 +28,7 @@ private:
 public:
     explicit ControlPannel(QWidget *parent = 0);
 Q_SIGNALS:
-    void start(const double startWL,const double stopWL, const double speed, const bool isRep);
+	void start(const int startWL, const int stopWL, const int initialWL, const int msdelay, const bool isRep);
     void stop();
     void reset();
 public Q_SLOTS:

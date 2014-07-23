@@ -1,5 +1,6 @@
 #include "controlpannel.h"
 #include <QGridLayout>
+#include <qinputdialog.h>
 
 ControlPannel::ControlPannel(QWidget *parent) :
     QWidget(parent)
@@ -40,9 +41,9 @@ ControlPannel::ControlPannel(QWidget *parent) :
     layout->addWidget(d_plot,0,2,7,1);
 
     setLayout(layout);
-    CONNECT(b_start,SIGNAL(clicked(),this,SLOT(buttonStart());
-    CONNECT(b_stop,SIGNAL(clicked(),this,SLOT(buttonStop());
-    CONNECT(b_reset,SIGNAL(clicked(),this,SLOT(buttonReset());
+    connect(b_start,SIGNAL(clicked()),this,SLOT(buttonStart()));
+    connect(b_stop,SIGNAL(clicked()),this,SLOT(buttonStop()));
+    connect(b_reset,SIGNAL(clicked()),this,SLOT(buttonReset()));
 }
 
 void ControlPannel::showData( const double *wavelength, const double *amplitude, int count )
@@ -52,13 +53,14 @@ void ControlPannel::showData( const double *wavelength, const double *amplitude,
 
 void ControlPannel::buttonStart()
 {
-    double begin, end, speed;
+    int begin, end, msdelay;
     bool isRep;
-    begin=0;
-    end=1000;
-    speed=10;
-    isRep=true;
-    emit start(begin,end,speed,isRep);
+	begin = e_begin->text().toInt();
+	end = e_end->text().toInt();
+	msdelay = 1000;
+    isRep=0;
+	int currentWL = QInputDialog::getInt(this, tr("Current Position"), tr("Current Position"));
+    emit start(begin,end,currentWL,msdelay,isRep);
 }
 
 void ControlPannel::buttonStop()

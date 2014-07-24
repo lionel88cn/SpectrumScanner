@@ -3,19 +3,36 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    int count=2000;
-    double *wavelength=new double [count];
-    double *amplitude= new double [count];
-    for (int i=0;i<count;++i){
-        wavelength[i]=2+0.0005*i;
-        amplitude[i]=double(i);
-    }
+	motorControlAction = new QAction("&Motor Control",this);
+	functionMenu = menuBar()->addMenu("&Functions");
+	functionMenu->addAction(motorControlAction);
+	connect(motorControlAction, SIGNAL(triggered()), this, SLOT(launchMotorControl()));
+
+
 	executor = new Executor();
     c_pannel=new ControlPannel(this);
-	connect(c_pannel, SIGNAL(start(const int startWL, const int stopWL, const int initialWL, const int msdelay, const bool isRep)),
-		executor, SLOT(startBtnSlot(const int startWL, const int stopWL, const int initialWL, const int msdelay, const bool isRep)));
+	motorControlPannel = new MotorControlPannel();
+	connect(c_pannel, SIGNAL(start(const int, const int, const int, const int, const bool,const int)),
+		executor, SLOT(startBtnSlot(const int, const int, const int, const int, const bool,const int)));
 	connect(c_pannel, SIGNAL(stop()), executor, SLOT(stopBtnSlot()));
 	connect(c_pannel, SIGNAL(reset()), executor, SLOT(resetBtnSlot()));
+	connect(motorControlPannel, SIGNAL(motorAdvance(int)), executor, SLOT(motorAdvance(int)));
+	connect(motorControlPannel, SIGNAL(motorReverse(int)), executor, SLOT(motorReverse(int)));
+	connect(executor, SIGNAL(showData(const double*, const double*, const int)), c_pannel, SLOT(showData(const double*, const double*, const int)));
+	connect(executor, SIGNAL(showCurrentWL(const double)), c_pannel, SLOT(showCurrentWL(const double)));
     setCentralWidget(c_pannel);
-    c_pannel->showData(wavelength,amplitude,count);
 }
+
+void MainWindow::launchMotorControl(){
+	/*int count=2000;
+	double *wavelength=new double [count];
+	double *amplitude= new double [count];
+	for (int i=0;i<count;++i){
+	wavelength[i]=2+0.0005*i;
+	amplitude[i]=double(i);
+	}
+	c_pannel->showData(wavelength,amplitude,count);*/
+	motorControlPannel->show();
+}
+
+

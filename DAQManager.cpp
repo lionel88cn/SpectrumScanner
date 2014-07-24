@@ -3,6 +3,8 @@
 
 DAQManager::DAQManager()
 {
+	stateCount = 4;
+	states = new uInt32[stateCount];
 	states[0] = 0x8;
 	states[1] = 0x4;
 	states[2] = 0x2;
@@ -12,9 +14,14 @@ DAQManager::DAQManager()
 	DAQmxCreateTask("", &adcTaskHandle);
 	DAQmxCreateDOChan(motorTaskHandle, "Dev1/port0", "", DAQmx_Val_ChanForAllLines);
 	DAQmxCreateAIVoltageChan(adcTaskHandle, "Dev1/ai0", "", DAQmx_Val_Cfg_Default, -10.0, 10.0, DAQmx_Val_Volts, NULL);
-	DAQmxCfgSampClkTiming(adcTaskHandle, "", 10000.0, DAQmx_Val_Rising, DAQmx_Val_FiniteSamps, SAMPLE_COUNT);
+	DAQmxCfgSampClkTiming(adcTaskHandle, "", SAMPLE_FREQ, DAQmx_Val_Rising, DAQmx_Val_ContSamps, SAMPLE_COUNT);
 	DAQmxStartTask(motorTaskHandle);
 	DAQmxStartTask(adcTaskHandle);
+
+	uInt32 data;
+	int32 written;
+	data = states[0];
+	DAQmxWriteDigitalU32(motorTaskHandle, 1, 1, 10.0, DAQmx_Val_GroupByChannel, &data, &written, NULL);
 }
 
 
@@ -29,6 +36,7 @@ void DAQManager::motorAdvance(){
 	DAQmxWriteDigitalU32(motorTaskHandle, 1, 1, 10.0, DAQmx_Val_GroupByChannel, &data, &written, NULL);
 	stateNum++;
 	if (stateNum == stateCount) stateNum = 0;
+	Sleep(5);
 }
 
 void DAQManager::motorReverse(){
@@ -38,12 +46,14 @@ void DAQManager::motorReverse(){
 	DAQmxWriteDigitalU32(motorTaskHandle, 1, 1, 10.0, DAQmx_Val_GroupByChannel, &data, &written, NULL);
 	stateNum--;
 	if (stateNum == -1) stateNum = stateCount-1;
+	Sleep(5);
 }
 
 double DAQManager::getVoltage(){
-	float64 data[1000],sum;
+	float64 *data,sum;
 	int32 read;
-	DAQmxReadAnalogF64(adcTaskHandle, SAMPLE_COUNT, 10.0, DAQmx_Val_GroupByChannel, data, SAMPLE_COUNT, &read, NULL);
+	data = new float64[SAMPLE_COUNT];
+	DAQmxReadAnalogF64(adcTaskHandle, SAMPLE_COUNT, 10.0, DAQmx_Val_GroupByScanNumber, data, SAMPLE_COUNT, &read, NULL);
 	sum = 0;
 	for (int i = 0; i < SAMPLE_COUNT; ++i){
 		sum += data[i];

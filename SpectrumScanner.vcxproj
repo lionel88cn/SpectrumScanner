@@ -151,14 +151,28 @@
     <ClCompile Include="Debug\moc_mainwindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Debug\moc_MessageWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_MotorControlPannel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Debug\moc_plot.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Executor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
+    <ClCompile Include="MessageWindow.cpp" />
+    <ClCompile Include="MotorControlPannel.cpp" />
     <ClCompile Include="plot.cpp" />
     <ClCompile Include="Release\moc_Executor.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Release\moc_MessageWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Release\moc_MotorControlPannel.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Release\moc_plot.cpp">
@@ -207,6 +221,26 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DAQManager.h" />
+    <CustomBuild Include="MotorControlPannel.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing MotorControlPannel.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQWT_NO_OPENGL -DQWT_NO_SVG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_CONCURRENT_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_OPENGL_ES_2 -DQT_OPENGL_ES_2_ANGLE -DQWT_DLL "-IC:\Program Files (x86)\National Instruments\Shared\ExternalCompilerSupport\C\include" "-IC:\Qwt-6.1.0\include" "-IC:\Qt\qwt-6.1.0\src" "-IC:\qt\5.3\msvc2013\include" "-IC:\qt\5.3\msvc2013\include\QtPrintSupport" "-IC:\qt\5.3\msvc2013\include\QtWidgets" "-IC:\qt\5.3\msvc2013\include\QtConcurrent" "-IC:\qt\5.3\msvc2013\include\QtGui" "-IC:\qt\5.3\msvc2013\include\QtANGLE" "-IC:\qt\5.3\msvc2013\include\QtCore" "-I.\debug" "-IC:\qt\5.3\msvc2013\mkspecs\win32-msvc2013"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing MotorControlPannel.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQWT_NO_OPENGL -DQWT_NO_SVG -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_CONCURRENT_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_OPENGL_ES_2 -DQT_OPENGL_ES_2_ANGLE -DNDEBUG "-IC:\Qt\qwt-6.1.0\src" "-IC:\qt\5.3\msvc2013\include" "-IC:\qt\5.3\msvc2013\include\QtPrintSupport" "-IC:\qt\5.3\msvc2013\include\QtWidgets" "-IC:\qt\5.3\msvc2013\include\QtConcurrent" "-IC:\qt\5.3\msvc2013\include\QtGui" "-IC:\qt\5.3\msvc2013\include\QtANGLE" "-IC:\qt\5.3\msvc2013\include\QtCore" "-I.\release" "-IC:\qt\5.3\msvc2013\mkspecs\win32-msvc2013"</Command>
+    </CustomBuild>
+    <CustomBuild Include="MessageWindow.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing MessageWindow.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQWT_NO_OPENGL -DQWT_NO_SVG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_CONCURRENT_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_OPENGL_ES_2 -DQT_OPENGL_ES_2_ANGLE -DQWT_DLL "-IC:\Program Files (x86)\National Instruments\Shared\ExternalCompilerSupport\C\include" "-IC:\Qwt-6.1.0\include" "-IC:\Qt\qwt-6.1.0\src" "-IC:\qt\5.3\msvc2013\include" "-IC:\qt\5.3\msvc2013\include\QtPrintSupport" "-IC:\qt\5.3\msvc2013\include\QtWidgets" "-IC:\qt\5.3\msvc2013\include\QtConcurrent" "-IC:\qt\5.3\msvc2013\include\QtGui" "-IC:\qt\5.3\msvc2013\include\QtANGLE" "-IC:\qt\5.3\msvc2013\include\QtCore" "-I.\debug" "-IC:\qt\5.3\msvc2013\mkspecs\win32-msvc2013"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing MessageWindow.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQWT_NO_OPENGL -DQWT_NO_SVG -DQT_NO_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_CONCURRENT_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_OPENGL_ES_2 -DQT_OPENGL_ES_2_ANGLE -DNDEBUG "-IC:\Qt\qwt-6.1.0\src" "-IC:\qt\5.3\msvc2013\include" "-IC:\qt\5.3\msvc2013\include\QtPrintSupport" "-IC:\qt\5.3\msvc2013\include\QtWidgets" "-IC:\qt\5.3\msvc2013\include\QtConcurrent" "-IC:\qt\5.3\msvc2013\include\QtGui" "-IC:\qt\5.3\msvc2013\include\QtANGLE" "-IC:\qt\5.3\msvc2013\include\QtCore" "-I.\release" "-IC:\qt\5.3\msvc2013\mkspecs\win32-msvc2013"</Command>
+    </CustomBuild>
     <CustomBuild Include="Executor.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing Executor.h...</Message>

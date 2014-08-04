@@ -11,8 +11,10 @@ ControlPannel::ControlPannel(QWidget *parent) :
     b_start->setText(tr("START"));
     b_stop=new QPushButton(this);
     b_stop->setText(tr("STOP"));
-    b_reset=new QPushButton(this);
-    b_reset->setText(tr("RESET"));
+    b_advance=new QPushButton(this);
+	b_advance->setText(tr("ADVANCE"));
+	b_reverse = new QPushButton(this);
+	b_reverse->setText(tr("REVERSE"));
     l_begin=new QLabel(this);
     l_begin->setText(tr("Begin Wavelength:"));
     l_end=new QLabel(this);
@@ -33,7 +35,8 @@ ControlPannel::ControlPannel(QWidget *parent) :
     cb_isRep=new QCheckBox(this);
     cb_isRep->setText(tr("Repeat"));
 	sbox_delay=new QSpinBox(this);
-	sbox_delay->setMinimum(0);
+	sbox_delay->setMinimum(0); 
+	sbox_delay->setMaximum(1000);
 	sbox_delay->setValue(0);
     d_plot=new Plot(this);
 	d_plot->setMinimumSize(QSize(1000, 1000));
@@ -51,7 +54,8 @@ ControlPannel::ControlPannel(QWidget *parent) :
 
 	pannelLayout->addWidget(b_start, 5, 0, 1, 2);
 	pannelLayout->addWidget(b_stop, 6, 0, 1, 2);
-	pannelLayout->addWidget(b_reset, 7, 0, 1, 2);
+	pannelLayout->addWidget(b_advance, 7, 0);
+	pannelLayout->addWidget(b_reverse, 7, 1);
 	pannelLayout->setColumnStretch(0, 0);
 	pannelLayout->setColumnStretch(1, 0);
 	mainLayout->addLayout(pannelLayout, 0, 0);
@@ -59,7 +63,8 @@ ControlPannel::ControlPannel(QWidget *parent) :
     setLayout(mainLayout);
     connect(b_start,SIGNAL(clicked()),this,SLOT(buttonStart()));
     connect(b_stop,SIGNAL(clicked()),this,SLOT(buttonStop()));
-    connect(b_reset,SIGNAL(clicked()),this,SLOT(buttonReset()));
+    connect(b_advance,SIGNAL(clicked()),this,SLOT(buttonAdvance()));
+	connect(b_reverse, SIGNAL(clicked()), this, SLOT(buttonReverse()));
 }
 
 void ControlPannel::showData( const double *wavelength, const double *amplitude, int count )
@@ -85,9 +90,14 @@ void ControlPannel::buttonStop()
     emit stop();
 }
 
-void ControlPannel::buttonReset()
+void ControlPannel::buttonAdvance()
 {
-    emit reset();
+    emit motorAdvance(1);
+}
+
+void ControlPannel::buttonReverse()
+{
+	emit motorReverse(1);
 }
 
 void ControlPannel::showCurrentWL(const double currentWL){

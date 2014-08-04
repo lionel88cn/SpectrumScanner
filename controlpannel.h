@@ -16,7 +16,8 @@ class ControlPannel : public QWidget
 private:
     QPushButton* b_start;
     QPushButton* b_stop;
-    QPushButton* b_reset;
+    QPushButton* b_advance;
+	QPushButton* b_reverse;
     QLabel* l_begin;
     QLabel* l_end;
     QLabel* l_grating;
@@ -34,13 +35,15 @@ public:
 Q_SIGNALS:
 	void start(const int startWL, const int stopWL, const int initialWL, const int msdelay, const bool isRep, const int gratingNum);
     void stop();
-    void reset();
+	void motorAdvance(const int steps);
+	void motorReverse(const int steps);
 public Q_SLOTS:
     void showData( const double *wavelength, const double *amplitude, int count );
 	void showCurrentWL(const double currentWL);
     void buttonStart();
     void buttonStop();
-    void buttonReset();
+	void buttonAdvance();
+	void buttonReverse();
 };
 
 #endif // CONTROLPANNEL_H

@@ -65,6 +65,7 @@ void Executor::run(){
 
 
 	int steps = (stopWL - startWL)*RESOLUTION;
+	qDebug() << "Executor: Advance Forward";
 	data = new double[steps];
 	double *wlData = new double[steps];
 	for (int i = 0; i < steps; ++i){
@@ -80,18 +81,18 @@ void Executor::run(){
 	emit showData(wlData, data, steps);
 	if (!repFlag) return;
 	while (1){
+		msleep(500);
+		qDebug() << "Executor: Reverse Back";
 		for (int i = 0; i < steps; ++i){
 			if (!runFlag) return;
 			currentWL = double(stopWL) - double(i) / double(RESOLUTION);
 			currentWL *= this->gratingNum;
-			wlData[steps - 1 - i] = currentWL;
 			emit showCurrentWL(currentWL);
-			data[steps - 1 - i] = daq->getVoltage();
 			daq->motorReverse();
-			msleep(msdelay);
 		}
-		emit showData(wlData, data, steps);
 
+		msleep(500);
+		qDebug() << "Executor: Advance Forward";
 		for (int i = 0; i < steps; ++i){
 			if (!runFlag) return;
 			currentWL = double(startWL) + double(i) / double(RESOLUTION);
@@ -106,7 +107,7 @@ void Executor::run(){
 	}
 }
 
-void Executor::motorAdvance(int steps)
+void Executor::motorAdvance(const int steps)
 {
 	QElapsedTimer timer;
 	timer.start();
@@ -118,7 +119,7 @@ void Executor::motorAdvance(int steps)
 	
 }
 
-void Executor::motorReverse(int steps){
+void Executor::motorReverse(const int steps){
 	QElapsedTimer timer;
 	timer.start();
 	qDebug() << "Motor Reverse:" << steps;

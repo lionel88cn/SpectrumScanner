@@ -11,8 +11,8 @@ public:
 	MotorControlPannel();
 	~MotorControlPannel();
 Q_SIGNALS:
-	void motorAdvance(int steps);
-	void motorReverse(int steps);
+	void motorAdvance(const int steps);
+	void motorReverse(const int steps);
 public Q_SLOTS:
 	void buttonAdvanceSlot();
 	void buttonReverseSlot();

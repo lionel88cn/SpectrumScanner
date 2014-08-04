@@ -15,9 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(c_pannel, SIGNAL(start(const int, const int, const int, const int, const bool,const int)),
 		executor, SLOT(startBtnSlot(const int, const int, const int, const int, const bool,const int)));
 	connect(c_pannel, SIGNAL(stop()), executor, SLOT(stopBtnSlot()));
-	connect(c_pannel, SIGNAL(reset()), executor, SLOT(resetBtnSlot()));
-	connect(motorControlPannel, SIGNAL(motorAdvance(int)), executor, SLOT(motorAdvance(int)));
-	connect(motorControlPannel, SIGNAL(motorReverse(int)), executor, SLOT(motorReverse(int)));
+	connect(c_pannel, SIGNAL(motorAdvance(const int)), executor, SLOT(motorAdvance(const int)));
+	connect(c_pannel, SIGNAL(motorReverse(const int)), executor, SLOT(motorReverse(const int)));
+	connect(motorControlPannel, SIGNAL(motorAdvance(const int)), executor, SLOT(motorAdvance(const int)));
+	connect(motorControlPannel, SIGNAL(motorReverse(const int)), executor, SLOT(motorReverse(const int)));
 	connect(executor, SIGNAL(showData(const double*, const double*, const int)), c_pannel, SLOT(showData(const double*, const double*, const int)));
 	connect(executor, SIGNAL(showCurrentWL(const double)), c_pannel, SLOT(showCurrentWL(const double)));
     setCentralWidget(c_pannel);

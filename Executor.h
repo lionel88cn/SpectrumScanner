@@ -1,7 +1,7 @@
 #pragma once
 #include <qthread.h>
 #include "DAQManager.h"
-#define RESOLUTION 5
+#define RESOLUTION 16
 class Executor :
 	public QThread
 {
@@ -16,8 +16,8 @@ public Q_SLOTS:
 void startBtnSlot(const int startWL, const int stopWL, const int initialWL, const int msdelay, const bool isRep, const int gratingNum);
 	void stopBtnSlot();
 	void resetBtnSlot();
-	void motorAdvance(int steps);
-	void motorReverse(int steps);
+	void motorAdvance(const int steps);
+	void motorReverse(const int steps);
 private:
 	DAQManager *daq;
 	int initialWL;

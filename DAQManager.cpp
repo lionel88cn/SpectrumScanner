@@ -3,12 +3,16 @@
 
 DAQManager::DAQManager()
 {
-	stateCount = 4;
+	stateCount = 8;
 	states = new uInt32[stateCount];
 	states[0] = 0x8;
-	states[1] = 0x4;
-	states[2] = 0x2;
-	states[3] = 0x1;
+	states[1] = 0xB;
+	states[2] = 0x4;
+	states[3] = 0x6;
+	states[4] = 0x2;
+	states[5] = 0x3;
+	states[6] = 0x1;
+	states[7] = 0x9;
 	stateNum = 0;
 	DAQmxCreateTask("", &motorTaskHandle);
 	DAQmxCreateTask("", &adcTaskHandle);

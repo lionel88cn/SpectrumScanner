@@ -6,7 +6,7 @@ DAQManager::DAQManager()
 	stateCount = 8;
 	states = new uInt32[stateCount];
 	states[0] = 0x8;
-	states[1] = 0xB;
+	states[1] = 0xC;
 	states[2] = 0x4;
 	states[3] = 0x6;
 	states[4] = 0x2;

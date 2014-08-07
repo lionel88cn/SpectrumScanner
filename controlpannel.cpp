@@ -39,8 +39,8 @@ ControlPannel::ControlPannel(QWidget *parent) :
 	sbox_delay->setMaximum(1000);
 	sbox_delay->setValue(0);
     d_plot=new Plot(this);
-	d_plot->setMinimumSize(QSize(1000, 1000));
-	d_plot->setMaximumSize(QSize(1000, 1000));
+    d_plot->setMinimumSize(QSize(500, 500));
+    d_plot->setMaximumSize(QSize(500, 500));
 	pannelLayout->addWidget(l_grating, 0, 0);
 	pannelLayout->addWidget(c_grating, 0, 1);
 	pannelLayout->addWidget(l_delay, 1, 0);

@@ -4,6 +4,9 @@
 
 Executor::Executor()
 {
+    gratingNum=1;
+    runFlag=0;
+    repFlag=0;
 	daq = new DAQManager();
 }
 

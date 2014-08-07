@@ -23,11 +23,11 @@ private:
 	int initialWL;
 	int startWL;
 	int stopWL;
-	int gratingNum=1;
+    int gratingNum;
 	double currentWL;
 	int msdelay;
-	bool repFlag = 0;
-	bool runFlag = 0;
+    bool repFlag;
+    bool runFlag;
 	double *data;
 	void run();
 };

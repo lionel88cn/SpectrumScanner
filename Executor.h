@@ -5,6 +5,7 @@
 class Executor :
 	public QThread
 {
+    enum rotDir {FWD,BWD,INIT};
 	Q_OBJECT
 public:
 	Executor();
@@ -28,7 +29,9 @@ private:
 	int msdelay;
     bool repFlag;
     bool runFlag;
+    rotDir rotDirFlag;
 	double *data;
 	void run();
+    void backlash(rotDir next);
 };
 

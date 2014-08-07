@@ -6,7 +6,7 @@
     #include <NIDAQmx.h>
 #elif __APPLE__
     #include <unistd.h>
-    #include <nidaqmxbase/NIDAQmxBase.h>
+    #include <NIDAQmxBase.h>
 #endif
 
 #define SAMPLE_COUNT 20

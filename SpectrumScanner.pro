@@ -33,6 +33,7 @@ HEADERS  += mainwindow.h \
     DAQManager.h \
     Executor.h \
     MessageWindow.h \
-    MotorControlPannel.h
+    MotorControlPannel.h \
+    NIDAQmxBase.h
 
 FORMS    +=

@@ -15,7 +15,6 @@ DAQManager::DAQManager()
 	states[6] = 0x1;
 	states[7] = 0x9;
 	stateNum = 0;
-
 #ifdef _WIN32
 	DAQmxCreateTask("", &motorTaskHandle);
 	DAQmxCreateTask("", &adcTaskHandle);

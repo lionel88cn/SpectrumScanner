@@ -7,6 +7,7 @@ Executor::Executor()
     gratingNum=1;
     runFlag=0;
     repFlag=0;
+    rotDirFlag=INIT;
 	daq = new DAQManager();
 }
 
@@ -48,6 +49,7 @@ void Executor::run(){
 	if (this->initialWL > this->startWL){
 		int steps = (initialWL - this->startWL)*RESOLUTION;
 		qDebug() << "Executor: Reverse Back";
+        backlash(BWD);
 		for (int i = 0; i < steps; ++i) {
 			currentWL = double(initialWL) - double(i) / double(RESOLUTION);
 			currentWL *= this->gratingNum;
@@ -58,6 +60,7 @@ void Executor::run(){
 	if (this->initialWL < this->startWL){
 		int steps = (this->startWL - initialWL)*RESOLUTION;
 		qDebug() << "Executor: Advance Forward";
+        backlash(FWD);
 		for (int i = 0; i < steps; ++i) {
 			currentWL = double(initialWL) + double(i) / double(RESOLUTION);
 			currentWL *= this->gratingNum;
@@ -69,6 +72,7 @@ void Executor::run(){
 
 	int steps = (stopWL - startWL)*RESOLUTION;
 	qDebug() << "Executor: Advance Forward";
+    backlash(FWD);
 	data = new double[steps];
 	double *wlData = new double[steps];
 	for (int i = 0; i < steps; ++i){
@@ -86,6 +90,7 @@ void Executor::run(){
 	while (1){
 		msleep(500);
 		qDebug() << "Executor: Reverse Back";
+        backlash(BWD);
 		for (int i = 0; i < steps; ++i){
 			if (!runFlag) return;
 			currentWL = double(stopWL) - double(i) / double(RESOLUTION);
@@ -96,6 +101,7 @@ void Executor::run(){
 
 		msleep(500);
 		qDebug() << "Executor: Advance Forward";
+        backlash(FWD);
 		for (int i = 0; i < steps; ++i){
 			if (!runFlag) return;
 			currentWL = double(startWL) + double(i) / double(RESOLUTION);
@@ -115,6 +121,7 @@ void Executor::motorAdvance(const int steps)
 	QElapsedTimer timer;
 	timer.start();
 	qDebug() << "Motor Advance:"<<steps;
+    backlash(FWD);
 	for (int i = 0; i < steps; ++i){
 		daq->motorAdvance();
 	}
@@ -126,8 +133,22 @@ void Executor::motorReverse(const int steps){
 	QElapsedTimer timer;
 	timer.start();
 	qDebug() << "Motor Reverse:" << steps;
+    backlash(BWD);
 	for (int i = 0; i < steps; ++i){
 		daq->motorReverse();
 	}
 	qDebug() << "Time elapsed:" << timer.elapsed()<<"ms";
+}
+
+void Executor::backlash(rotDir next){
+    if (rotDirFlag==FWD&&next==BWD){
+        daq->motorReverse();
+        daq->motorReverse();
+    }
+    if (rotDirFlag==BWD&&next==FWD)
+    {
+        daq->motorAdvance();
+        daq->motorAdvance();
+    }
+    rotDirFlag=next;
 }

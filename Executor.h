@@ -33,5 +33,6 @@ private:
 	double *data;
 	void run();
     void backlash(rotDir next);
+    void clearBuffer();
 };
 

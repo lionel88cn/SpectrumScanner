@@ -73,6 +73,7 @@ void Executor::run(){
 	int steps = (stopWL - startWL)*RESOLUTION;
 	qDebug() << "Executor: Advance Forward";
     backlash(FWD);
+    clearBuffer();
 	data = new double[steps];
 	double *wlData = new double[steps];
 	for (int i = 0; i < steps; ++i){
@@ -102,6 +103,7 @@ void Executor::run(){
 		msleep(500);
 		qDebug() << "Executor: Advance Forward";
         backlash(FWD);
+        clearBuffer();
 		for (int i = 0; i < steps; ++i){
 			if (!runFlag) return;
 			currentWL = double(startWL) + double(i) / double(RESOLUTION);
@@ -151,4 +153,14 @@ void Executor::backlash(rotDir next){
         daq->motorAdvance();
     }
     rotDirFlag=next;
+}
+
+void Executor::clearBuffer(){
+    QElapsedTimer timer;
+    timer.start();
+    while(1){
+        timer.restart();
+        daq->getVoltage();
+        if (timer.elapsed()>50) break;
+    }
 }

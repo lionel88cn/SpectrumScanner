@@ -29,13 +29,15 @@ DAQManager::DAQManager()
 	data = states[0];
 	DAQmxWriteDigitalU32(motorTaskHandle, 1, 1, 10.0, DAQmx_Val_GroupByChannel, &data, &written, NULL);
 #elif __APPLE__
-    DAQmxBaseCreateTask("", &motorTaskHandle);
-    DAQmxBaseCreateTask("", &adcTaskHandle);
-    DAQmxBaseCreateAIVoltageChan(adcTaskHandle, "Dev1/ai0", "", DAQmx_Val_Cfg_Default, -10.0, 10.0, DAQmx_Val_Volts, NULL);
-    DAQmxBaseCfgSampClkTiming(adcTaskHandle,"OnboardClock", SAMPLE_FREQ, DAQmx_Val_Rising, DAQmx_Val_FiniteSamps, SAMPLE_COUNT);
+    DAQmxBaseCreateTask("motorTask", &motorTaskHandle);
     DAQmxBaseCreateDOChan(motorTaskHandle, "Dev1/port0", "", DAQmx_Val_ChanForAllLines);
     DAQmxBaseStartTask(motorTaskHandle);
 
+    DAQmxBaseCreateTask("adcTask", &adcTaskHandle);
+    DAQmxBaseCreateAIVoltageChan(adcTaskHandle, "Dev1/ai0", "", DAQmx_Val_Cfg_Default, -10.0, 10.0, DAQmx_Val_Volts, NULL);
+    DAQmxBaseCfgSampClkTiming(adcTaskHandle,"OnboardClock", SAMPLE_FREQ, DAQmx_Val_Rising, DAQmx_Val_ContSamps, SAMPLE_COUNT);
+    DAQmxBaseCfgInputBuffer(adcTaskHandle,0);
+    DAQmxBaseStartTask(adcTaskHandle);
     uInt32 data;
     int32 written;
     data = states[0];
@@ -94,21 +96,19 @@ double DAQManager::getVoltage(){
     int32 read;
 #ifdef _WIN32
 	DAQmxReadAnalogF64(adcTaskHandle, SAMPLE_COUNT, 10.0, DAQmx_Val_GroupByScanNumber, data, SAMPLE_COUNT, &read, NULL);
-	sum = 0;
-	for (int i = 0; i < SAMPLE_COUNT; ++i){
-		sum += data[i];
-	}
-	return sum / SAMPLE_COUNT;
 #elif __APPLE__
-    DAQmxBaseStartTask(adcTaskHandle);
-    DAQmxBaseReadAnalogF64(adcTaskHandle, -1, 10.0, DAQmx_Val_GroupByScanNumber, data, SAMPLE_COUNT, &read, NULL);
+    /*bool32 isDone;
+    DAQmxBaseIsTaskDone(adcTaskHandle,&isDone);*/
+    DAQmxBaseReadAnalogF64(adcTaskHandle, SAMPLE_COUNT, 10.0, DAQmx_Val_GroupByScanNumber, data, SAMPLE_COUNT, &read, NULL);
+    /*while(!isDone);
     DAQmxBaseStopTask(adcTaskHandle);
+    DAQmxBaseClearTask(adcTaskHandle);*/
+#endif
     sum = 0;
     for (int i = 0; i < SAMPLE_COUNT; ++i){
         sum += data[i];
     }
     return sum / SAMPLE_COUNT;
-#endif
 }
 
 int DAQManager::getNumOfStates(){

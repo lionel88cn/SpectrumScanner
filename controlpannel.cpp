@@ -32,6 +32,7 @@ ControlPannel::ControlPannel(QWidget *parent) :
 	c_grating->addItem(tr("2"));
 	c_grating->addItem(tr("4"));
 	c_grating->setEditable(0);
+    c_grating->setCurrentIndex(2);
     cb_isRep=new QCheckBox(this);
     cb_isRep->setText(tr("Repeat"));
 	sbox_delay=new QSpinBox(this);

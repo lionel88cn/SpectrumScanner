@@ -5,7 +5,7 @@ MotorControlPannel::MotorControlPannel()
 {
 	QGridLayout *layout = new QGridLayout();
 	l_steps = new QLabel(this);
-	l_steps->setText("stpes:");
+    l_steps->setText("STEPS:");
 	edit_steps = new QLineEdit(this);
 	b_advance = new QPushButton(tr("ADVANCE"), this);
 	b_reverse = new QPushButton(tr("REVERSE"), this);

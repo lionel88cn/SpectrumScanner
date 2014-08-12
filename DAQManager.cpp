@@ -31,11 +31,10 @@ DAQManager::DAQManager()
 #elif __APPLE__
     DAQmxBaseCreateTask("", &motorTaskHandle);
     DAQmxBaseCreateTask("", &adcTaskHandle);
-    DAQmxBaseCreateDOChan(motorTaskHandle, "Dev1/port0", "", DAQmx_Val_ChanForAllLines);
     DAQmxBaseCreateAIVoltageChan(adcTaskHandle, "Dev1/ai0", "", DAQmx_Val_Cfg_Default, -10.0, 10.0, DAQmx_Val_Volts, NULL);
-    DAQmxBaseCfgSampClkTiming(adcTaskHandle, "", SAMPLE_FREQ, DAQmx_Val_Rising, DAQmx_Val_ContSamps, SAMPLE_COUNT);
+    DAQmxBaseCfgSampClkTiming(adcTaskHandle,"OnboardClock", SAMPLE_FREQ, DAQmx_Val_Rising, DAQmx_Val_FiniteSamps, SAMPLE_COUNT);
+    DAQmxBaseCreateDOChan(motorTaskHandle, "Dev1/port0", "", DAQmx_Val_ChanForAllLines);
     DAQmxBaseStartTask(motorTaskHandle);
-    DAQmxBaseStartTask(adcTaskHandle);
 
     uInt32 data;
     int32 written;
@@ -47,6 +46,11 @@ DAQManager::DAQManager()
 
 DAQManager::~DAQManager()
 {
+#ifdef _WIN32
+#elif __APPLE__
+    DAQmxBaseStopTask(adcTaskHandle);
+    DAQmxBaseStopTask(motorTaskHandle);
+#endif
 }
 
 void DAQManager::motorAdvance(){
@@ -86,9 +90,8 @@ void DAQManager::motorReverse(){
 
 double DAQManager::getVoltage(){
 
-	float64 *data,sum;
-	int32 read;
-	data = new float64[SAMPLE_COUNT];
+    float64 data[SAMPLE_COUNT],sum;
+    int32 read;
 #ifdef _WIN32
 	DAQmxReadAnalogF64(adcTaskHandle, SAMPLE_COUNT, 10.0, DAQmx_Val_GroupByScanNumber, data, SAMPLE_COUNT, &read, NULL);
 	sum = 0;
@@ -97,7 +100,9 @@ double DAQManager::getVoltage(){
 	}
 	return sum / SAMPLE_COUNT;
 #elif __APPLE__
-    DAQmxBaseReadAnalogF64(adcTaskHandle, SAMPLE_COUNT, 10.0, DAQmx_Val_GroupByScanNumber, data, SAMPLE_COUNT, &read, NULL);
+    DAQmxBaseStartTask(adcTaskHandle);
+    DAQmxBaseReadAnalogF64(adcTaskHandle, -1, 10.0, DAQmx_Val_GroupByScanNumber, data, SAMPLE_COUNT, &read, NULL);
+    DAQmxBaseStopTask(adcTaskHandle);
     sum = 0;
     for (int i = 0; i < SAMPLE_COUNT; ++i){
         sum += data[i];

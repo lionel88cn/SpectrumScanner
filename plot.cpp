@@ -22,7 +22,7 @@ Plot::Plot( QWidget *parent ):
     canvas->setBorderRadius( 10 );
 
     setCanvas( canvas );
-    setCanvasBackground( QColor( "MidnightBlue" ) );
+    setCanvasBackground( QColor( "White" ) );
 
     // legend
     QwtLegend *legend = new QwtLegend;
@@ -46,7 +46,7 @@ Plot::Plot( QWidget *parent ):
     // curves
     d_curve1 = new QwtPlotCurve( "Amplitude" );
     d_curve1->setRenderHint( QwtPlotItem::RenderAntialiased );
-    d_curve1->setPen( Qt::yellow );
+    d_curve1->setPen( Qt::blue );
     d_curve1->setLegendAttribute( QwtPlotCurve::LegendShowLine );
     d_curve1->setYAxis( QwtPlot::yLeft );
     d_curve1->attach( this );

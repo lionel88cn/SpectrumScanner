@@ -9,7 +9,7 @@
     #include <NIDAQmxBase.h>
 #endif
 
-#define SAMPLE_COUNT 20
+#define SAMPLE_COUNT 1000
 #define SAMPLE_FREQ 10000.0
 class DAQManager
 {

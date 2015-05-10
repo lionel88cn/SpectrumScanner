@@ -11,8 +11,7 @@
 #include "plot.h"
 
 
-Plot::Plot( QWidget *parent ):
-    QwtPlot( parent )
+Plot::Plot( QWidget *parent ):QwtPlot( parent )
 {
     setAutoReplot( false );
 

@@ -71,11 +71,12 @@ void Executor::run(){
 
 
 	int steps = (stopWL - startWL)*RESOLUTION;
+	dataCount = steps;
 	qDebug() << "Executor: Advance Forward";
     backlash(FWD);
     clearBuffer();
 	data = new double[steps];
-	double *wlData = new double[steps];
+	wlData = new double[steps];
 	for (int i = 0; i < steps; ++i){
 		if (!runFlag) return;
 		currentWL = double(startWL) + double(i) / double(RESOLUTION);

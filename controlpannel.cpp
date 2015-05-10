@@ -2,8 +2,7 @@
 #include <QGridLayout>
 #include <qinputdialog.h>
 
-ControlPannel::ControlPannel(QWidget *parent) :
-    QWidget(parent)
+ControlPannel::ControlPannel(QWidget *parent) : QWidget(parent)
 {
 	QGridLayout *mainLayout = new QGridLayout(this);
     QGridLayout *pannelLayout=new QGridLayout(this);
@@ -101,6 +100,7 @@ void ControlPannel::buttonReverse()
 	emit motorReverse(1);
 }
 
-void ControlPannel::showCurrentWL(const double currentWL){
+void ControlPannel::showCurrentWL(const double currentWL)
+{
 	l_current->setText(tr("Current Wavelength:")+QString::number(currentWL)+tr("nm"));
 }

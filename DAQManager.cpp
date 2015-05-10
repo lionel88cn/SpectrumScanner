@@ -1,6 +1,20 @@
 #include "DAQManager.h"
 
 
+int32 CVICALLBACK EveryNCallbackWrapper(TaskHandle taskHandle, int32 everyNsamplesEventType, uInt32 nSamples, void *callbackData)
+{
+	DAQManager * this_ = reinterpret_cast<DAQManager*>(callbackData);
+	return this_->EveryNCallback(taskHandle);
+}
+int32 DAQManager::EveryNCallback(TaskHandle taskHandle)
+{
+	int32       read = 0;
+	qDebug() << "Callback Triggered";
+	DAQmxReadAnalogF64(taskHandle, SAMPLE_COUNT, 10.0, DAQmx_Val_GroupByScanNumber, voltageData, SAMPLE_COUNT, &read, NULL);
+	dataAcquired = 1;
+	return 0;
+}
+
 DAQManager::DAQManager()
 {
 
@@ -15,19 +29,30 @@ DAQManager::DAQManager()
 	states[6] = 0x1;
 	states[7] = 0x9;
 	stateNum = 0;
+	dataAcquired = 0;
+	voltageData = new float64[SAMPLE_COUNT];
 #ifdef _WIN32
 	DAQmxCreateTask("", &motorTaskHandle);
 	DAQmxCreateTask("", &adcTaskHandle);
+	DAQmxCreateTask("", &triggerTaskHandle);
+
 	DAQmxCreateDOChan(motorTaskHandle, "Dev1/port0", "", DAQmx_Val_ChanForAllLines);
+	DAQmxCreateDOChan(triggerTaskHandle, "Dev1/port1", "", DAQmx_Val_ChanForAllLines);
+
 	DAQmxCreateAIVoltageChan(adcTaskHandle, "Dev1/ai0", "", DAQmx_Val_Cfg_Default, -10.0, 10.0, DAQmx_Val_Volts, NULL);
-	DAQmxCfgSampClkTiming(adcTaskHandle, "", SAMPLE_FREQ, DAQmx_Val_Rising, DAQmx_Val_ContSamps, SAMPLE_COUNT);
+	DAQmxCfgSampClkTiming(adcTaskHandle, "", SAMPLE_FREQ, DAQmx_Val_Rising, DAQmx_Val_FiniteSamps, SAMPLE_COUNT);
+	DAQmxCfgDigEdgeStartTrig(adcTaskHandle, "/Dev1/PFI0", DAQmx_Val_Rising);
+	DAQmxRegisterEveryNSamplesEvent(adcTaskHandle, DAQmx_Val_Acquired_Into_Buffer, 1000, 0, EveryNCallbackWrapper, this);
+
 	DAQmxStartTask(motorTaskHandle);
-	DAQmxStartTask(adcTaskHandle);
+	DAQmxStartTask(triggerTaskHandle);
 
 	uInt32 data;
 	int32 written;
 	data = states[0];
 	DAQmxWriteDigitalU32(motorTaskHandle, 1, 1, 10.0, DAQmx_Val_GroupByChannel, &data, &written, NULL);
+	data=0x0;
+	DAQmxWriteDigitalU32(triggerTaskHandle, 1, 1, 10.0, DAQmx_Val_GroupByChannel, &data, &written, NULL);
 #elif __APPLE__
     DAQmxBaseCreateTask("motorTask", &motorTaskHandle);
     DAQmxBaseCreateDOChan(motorTaskHandle, "Dev1/port0", "", DAQmx_Val_ChanForAllLines);
@@ -49,9 +74,27 @@ DAQManager::DAQManager()
 DAQManager::~DAQManager()
 {
 #ifdef _WIN32
+	DAQmxStopTask(adcTaskHandle);
+	DAQmxStopTask(motorTaskHandle);
+	DAQmxStopTask(triggerTaskHandle);
 #elif __APPLE__
     DAQmxBaseStopTask(adcTaskHandle);
     DAQmxBaseStopTask(motorTaskHandle);
+#endif
+}
+
+void DAQManager::trigger()
+{
+	uInt32 data;
+	int32 written;
+#ifdef _WIN32
+	data = 0xFFFF;
+	DAQmxWriteDigitalU32(triggerTaskHandle, 1, 1, 10.0, DAQmx_Val_GroupByChannel, &data, &written, NULL);
+	data = 0x0;
+	DAQmxWriteDigitalU32(triggerTaskHandle, 1, 1, 10.0, DAQmx_Val_GroupByChannel, &data, &written, NULL);
+#elif __APPLE__
+	DAQmxBaseStopTask(adcTaskHandle);
+	DAQmxBaseStopTask(motorTaskHandle);
 #endif
 }
 
@@ -92,10 +135,14 @@ void DAQManager::motorReverse(){
 
 double DAQManager::getVoltage(){
 
-    float64 data[SAMPLE_COUNT],sum;
+    float64 sum;
     int32 read;
 #ifdef _WIN32
-	DAQmxReadAnalogF64(adcTaskHandle, SAMPLE_COUNT, 10.0, DAQmx_Val_GroupByScanNumber, data, SAMPLE_COUNT, &read, NULL);
+	DAQmxStartTask(adcTaskHandle);
+	trigger();
+	while(!dataAcquired);
+	dataAcquired=0;
+	DAQmxStopTask(adcTaskHandle);
 #elif __APPLE__
     /*bool32 isDone;
     DAQmxBaseIsTaskDone(adcTaskHandle,&isDone);*/
@@ -106,7 +153,7 @@ double DAQManager::getVoltage(){
 #endif
     sum = 0;
     for (int i = 0; i < SAMPLE_COUNT; ++i){
-        sum += data[i];
+        sum += voltageData[i];
     }
     return sum / SAMPLE_COUNT;
 }

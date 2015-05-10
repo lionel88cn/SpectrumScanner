@@ -2,8 +2,7 @@
 #include <qthread.h>
 #include "DAQManager.h"
 #define RESOLUTION 16
-class Executor :
-	public QThread
+class Executor : public QThread
 {
     enum rotDir {FWD,BWD,INIT};
 	Q_OBJECT
@@ -14,7 +13,7 @@ Q_SIGNALS:
 	void showData(const double *wavelength, const double *amplitude, int count);
 	void showCurrentWL(const double currentWL);
 public Q_SLOTS:
-void startBtnSlot(const int startWL, const int stopWL, const int initialWL, const int msdelay, const bool isRep, const int gratingNum);
+	void startBtnSlot(const int startWL, const int stopWL, const int initialWL, const int msdelay, const bool isRep, const int gratingNum);
 	void stopBtnSlot();
 	void resetBtnSlot();
 	void motorAdvance(const int steps);
@@ -31,6 +30,8 @@ private:
     bool runFlag;
     rotDir rotDirFlag;
 	double *data;
+	double *wlData;
+	int dataCount;
 	void run();
     void backlash(rotDir next);
     void clearBuffer();

@@ -2,12 +2,14 @@
 #include <qdebug.h>
 #include <QElapsedTimer>
 
-Executor::Executor()
+Executor::Executor(QWidget *parent)
 {
+	this->parent = parent;
     gratingNum=1;
     runFlag=0;
     repFlag=0;
     rotDirFlag=INIT;
+	dataCount = 0;
 	daq = new DAQManager();
 }
 
@@ -17,11 +19,25 @@ Executor::~Executor()
 	delete daq;
 }
 
-void Executor::startBtnSlot(const int startWL, const int stopWL, const int initialWL, const int msdelay, const bool isRep,const int gratingNum){
+void Executor::saveActionSlot()
+{
+	QString fileName = QFileDialog::getSaveFileName(parent,tr("Save to Text File"), "", tr("Text Files (*.txt)"));
+	QFile file(fileName);
+	if (file.open(QIODevice::ReadWrite|QIODevice::Truncate))
+	{
+		QTextStream stream(&file);
+		stream << "Wavelength\tAmplitude\r\n";
+		for (int i = 0; i < dataCount; ++i){
+			stream << wlData[i] << "\t" << data[i]<<"\r\n";
+		}
+	}
+}
+
+void Executor::startBtnSlot(const int startWL, const int stopWL, const int initialWL, const int resolution, const bool isRep,const int gratingNum){
 	if (this->isRunning()) return;
 	this->startWL = startWL;
 	this->stopWL = stopWL;
-	this->msdelay = msdelay;
+	this->resolution = resolution;
 	this->gratingNum = gratingNum;
 	this->repFlag = isRep;
 	this->initialWL = initialWL;
@@ -70,22 +86,20 @@ void Executor::run(){
 	}
 
 
-	int steps = (stopWL - startWL)*RESOLUTION;
+	int steps = (stopWL - startWL)*RESOLUTION/resolution;
 	dataCount = steps;
 	qDebug() << "Executor: Advance Forward";
     backlash(FWD);
-    clearBuffer();
 	data = new double[steps];
 	wlData = new double[steps];
 	for (int i = 0; i < steps; ++i){
 		if (!runFlag) return;
-		currentWL = double(startWL) + double(i) / double(RESOLUTION);
+		currentWL = double(startWL) + double(i)*resolution / double(RESOLUTION);
 		currentWL *= this->gratingNum;
 		wlData[i] = currentWL;
 		emit showCurrentWL(currentWL);
 		data[i] = daq->getVoltage();
-		daq->motorAdvance();
-		msleep(msdelay);
+		for (int j = 0; j < resolution; ++j) daq->motorAdvance();
 	}
 	emit showData(wlData, data, steps);
 	if (!repFlag) return;
@@ -95,25 +109,23 @@ void Executor::run(){
         backlash(BWD);
 		for (int i = 0; i < steps; ++i){
 			if (!runFlag) return;
-			currentWL = double(stopWL) - double(i) / double(RESOLUTION);
+			currentWL = double(stopWL) - double(i)*resolution / double(RESOLUTION);
 			currentWL *= this->gratingNum;
 			emit showCurrentWL(currentWL);
-			daq->motorReverse();
+			for (int j = 0; j < resolution; ++j) daq->motorReverse();
 		}
 
 		msleep(500);
 		qDebug() << "Executor: Advance Forward";
         backlash(FWD);
-        clearBuffer();
 		for (int i = 0; i < steps; ++i){
 			if (!runFlag) return;
-			currentWL = double(startWL) + double(i) / double(RESOLUTION);
+			currentWL = double(startWL) + double(i)*resolution / double(RESOLUTION);
 			currentWL *= this->gratingNum;
 			wlData[i] = currentWL;
 			emit showCurrentWL(currentWL);
 			data[i] = daq->getVoltage();
-			daq->motorAdvance();
-			msleep(msdelay);
+			for (int j = 0; j < resolution; ++j) daq->motorAdvance();
 		}
 		emit showData(wlData, data, steps);
 	}
@@ -154,14 +166,4 @@ void Executor::backlash(rotDir next){
         daq->motorAdvance();
     }
     rotDirFlag=next;
-}
-
-void Executor::clearBuffer(){
-    QElapsedTimer timer;
-    timer.start();
-    while(1){
-        timer.restart();
-        daq->getVoltage();
-        if (timer.elapsed()>50) break;
-    }
 }

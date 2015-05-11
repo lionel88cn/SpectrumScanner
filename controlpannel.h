@@ -1,6 +1,8 @@
 #ifndef CONTROLPANNEL_H
 #define CONTROLPANNEL_H
 
+#define RESOLUTION 16
+
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>
@@ -8,6 +10,7 @@
 #include <QLineEdit>
 #include <QCheckBox>
 #include <qspinbox.h>
+#include <qdesktopwidget.h>
 #include "plot.h"
 
 class ControlPannel : public QWidget
@@ -21,13 +24,13 @@ private:
     QLabel* l_begin;
     QLabel* l_end;
     QLabel* l_grating;
-	QLabel* l_delay;
+	QLabel* l_resolution;
 	QLabel* l_current;
     QLineEdit* e_begin;
     QLineEdit* e_end;
     QComboBox* c_grating;
+	QComboBox* cbox_resolution;
     QCheckBox* cb_isRep;
-	QSpinBox *sbox_delay;
     Plot* d_plot;
 
 public:

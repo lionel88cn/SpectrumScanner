@@ -9,6 +9,7 @@
 #include "Executor.h"
 #include <qmenubar.h>
 #include "MotorControlPannel.h"
+#include "MessageWindow.h"
 
 class MainWindow : public QMainWindow
 {
@@ -16,13 +17,17 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
 private:
+	MessageWindow *debugWindow;
     ControlPannel *c_pannel;
 	MotorControlPannel *motorControlPannel;
 	Executor *executor;
 	QMenu *functionMenu;
+	QAction *debugWindowAction;
 	QAction *motorControlAction;
+	QAction *saveDataAction;
 public Q_SLOTS:
 	void launchMotorControl();
+	void launchDebugWindow();
 };
 
 #endif // MAINWINDOW_H

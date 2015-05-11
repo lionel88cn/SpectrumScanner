@@ -20,8 +20,8 @@ ControlPannel::ControlPannel(QWidget *parent) : QWidget(parent)
     l_end->setText(tr("End Wavelength:"));
     l_grating=new QLabel(this);
     l_grating->setText(tr("Grating Number:"));
-	l_delay = new QLabel(this);
-	l_delay->setText(tr("Step Delay(ms):"));
+	l_resolution = new QLabel(this);
+	l_resolution->setText(tr("Resolution (nm):"));
 	l_current = new QLabel(this);
 	l_current->setText(tr("Current Wavelength: N/A"));
     e_begin=new QLineEdit(this);
@@ -32,19 +32,32 @@ ControlPannel::ControlPannel(QWidget *parent) : QWidget(parent)
 	c_grating->addItem(tr("4"));
 	c_grating->setEditable(0);
     c_grating->setCurrentIndex(2);
+
+	cbox_resolution = new QComboBox(this);
+	cbox_resolution->addItem(tr("0.0625"));
+	cbox_resolution->addItem(tr("0.125"));
+	cbox_resolution->addItem(tr("0.25"));
+	cbox_resolution->addItem(tr("0.5"));
+	cbox_resolution->addItem(tr("1"));
+	cbox_resolution->addItem(tr("2"));
+	cbox_resolution->setEditable(0);
+	cbox_resolution->setCurrentIndex(0);
+
     cb_isRep=new QCheckBox(this);
     cb_isRep->setText(tr("Repeat"));
-	sbox_delay=new QSpinBox(this);
-	sbox_delay->setMinimum(0); 
-	sbox_delay->setMaximum(1000);
-	sbox_delay->setValue(0);
+	
+	QDesktopWidget desktop;
+	int desktopHeight = desktop.geometry().height();
+	int plotHeight = desktopHeight / 2;
+
     d_plot=new Plot(this);
-    d_plot->setMinimumSize(QSize(500, 500));
-    d_plot->setMaximumSize(QSize(500, 500));
+	d_plot->setMinimumSize(QSize(plotHeight, plotHeight));
+	d_plot->setMaximumSize(QSize(plotHeight, plotHeight));
+
 	pannelLayout->addWidget(l_grating, 0, 0);
 	pannelLayout->addWidget(c_grating, 0, 1);
-	pannelLayout->addWidget(l_delay, 1, 0);
-	pannelLayout->addWidget(sbox_delay, 1, 1);
+	pannelLayout->addWidget(l_resolution, 1, 0);
+	pannelLayout->addWidget(cbox_resolution, 1, 1);
 	pannelLayout->addWidget(l_begin, 2, 0);
 	pannelLayout->addWidget(e_begin, 2, 1);
 	pannelLayout->addWidget(l_end, 3, 0);
@@ -74,15 +87,15 @@ void ControlPannel::showData( const double *wavelength, const double *amplitude,
 
 void ControlPannel::buttonStart()
 {
-    int begin, end, msdelay,gratingNum;
+    int begin, end, resolution,gratingNum;
     bool isRep;
 	begin = e_begin->text().toInt();
 	end = e_end->text().toInt();
-	msdelay = sbox_delay->value();
+	resolution = cbox_resolution->currentText().toDouble()*RESOLUTION;
     isRep=cb_isRep->isChecked();
 	gratingNum = c_grating->currentText().toInt();
 	int currentWL = QInputDialog::getInt(this, tr("Current Position"), tr("Current Position"));
-    emit start(begin,end,currentWL,msdelay,isRep,gratingNum);
+	emit start(begin, end, currentWL, resolution, isRep, gratingNum);
 }
 
 void ControlPannel::buttonStop()

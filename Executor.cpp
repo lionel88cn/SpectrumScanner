@@ -67,22 +67,30 @@ void Executor::run(){
 		qDebug() << "Executor: Reverse Back";
         backlash(BWD);
 		for (int i = 0; i < steps; ++i) {
+			if (!runFlag) return;
 			currentWL = double(initialWL) - double(i) / double(RESOLUTION);
 			currentWL *= this->gratingNum;
 			emit showCurrentWL(currentWL);
 			daq->motorReverse();
 		}
+		currentWL = double(initialWL) - double(steps) / double(RESOLUTION);
+		currentWL *= this->gratingNum;
+		emit showCurrentWL(currentWL);
 	}
 	if (this->initialWL < this->startWL){
 		int steps = (this->startWL - initialWL)*RESOLUTION;
 		qDebug() << "Executor: Advance Forward";
         backlash(FWD);
 		for (int i = 0; i < steps; ++i) {
+			if (!runFlag) return;
 			currentWL = double(initialWL) + double(i) / double(RESOLUTION);
 			currentWL *= this->gratingNum;
 			emit showCurrentWL(currentWL);
 			daq->motorAdvance();
 		}
+		currentWL = double(initialWL) + double(steps) / double(RESOLUTION);
+		currentWL *= this->gratingNum;
+		emit showCurrentWL(currentWL);
 	}
 
 
@@ -101,6 +109,9 @@ void Executor::run(){
 		data[i] = daq->getVoltage();
 		for (int j = 0; j < resolution; ++j) daq->motorAdvance();
 	}
+	currentWL = double(startWL) + double(steps)*resolution / double(RESOLUTION);
+	currentWL *= this->gratingNum;
+	emit showCurrentWL(currentWL);
 	emit showData(wlData, data, steps);
 	if (!repFlag) return;
 	while (1){
@@ -114,6 +125,9 @@ void Executor::run(){
 			emit showCurrentWL(currentWL);
 			for (int j = 0; j < resolution; ++j) daq->motorReverse();
 		}
+		currentWL = double(stopWL) - double(steps)*resolution / double(RESOLUTION);
+		currentWL *= this->gratingNum;
+		emit showCurrentWL(currentWL);
 
 		msleep(500);
 		qDebug() << "Executor: Advance Forward";
@@ -127,6 +141,9 @@ void Executor::run(){
 			data[i] = daq->getVoltage();
 			for (int j = 0; j < resolution; ++j) daq->motorAdvance();
 		}
+		currentWL = double(startWL) + double(steps)*resolution / double(RESOLUTION);
+		currentWL *= this->gratingNum;
+		emit showCurrentWL(currentWL);
 		emit showData(wlData, data, steps);
 	}
 }
